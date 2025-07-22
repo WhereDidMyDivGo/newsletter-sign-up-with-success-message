@@ -7,6 +7,7 @@ import iconList from "./assets/images/icon-list.svg";
 
 function App() {
   const [signUpImg, setSignUpImg] = useState(window.innerWidth <= 950 ? signUpMobile : signUpDesktop);
+  const [valid, setValid] = useState(true);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -17,11 +18,21 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    //
+    const emailInput = e.target.elements.email;
+    const emailValue = emailInput.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (emailValue === "" || !emailRegex.test(emailValue)) {
+      setValid(false);
+    } else {
+      setValid(true);
+
+      //
+    }
   };
 
   return (
-    <Main>
+    <Main valid={valid}>
       <div className="sign-up">
         <img src={signUpImg} className="signup-img" />
         <div className="content">
@@ -46,11 +57,11 @@ function App() {
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
-              <div>
+              <div className="text-group">
                 <label htmlFor="email">Email address</label>
-                <p>Valid email required</p>
+                <p className="invalid">Valid email required</p>
               </div>
-              <input id="email" type="email" placeholder="email@company.com" required />
+              <input id="email" placeholder="email@company.com" />
             </div>
             <button type="submit">
               <p>Subscribe to monthly newsletter</p>
@@ -182,7 +193,7 @@ const Main = styled.main`
           flex-direction: column;
           gap: 8px;
 
-          div {
+          .text-group {
             width: 100%;
             display: flex;
             justify-content: space-between;
@@ -196,7 +207,7 @@ const Main = styled.main`
               line-height: 150%;
             }
 
-            p {
+            .invalid {
               color: #ff6155;
               text-align: right;
               font-feature-settings: "liga" off, "clig" off;
@@ -204,7 +215,7 @@ const Main = styled.main`
               font-style: normal;
               font-weight: 700;
               line-height: 150%;
-              display: none;
+              display: ${({ valid }) => (valid ? "none" : "block")};
             }
           }
 
@@ -212,11 +223,13 @@ const Main = styled.main`
             width: 100%;
             height: 56px;
             padding: 0 0 0 24px;
-            border: 1px solid var(--grey-25, rgba(25, 24, 43, 0.25));
+            border: 1px solid ${({ valid }) => (valid ? "rgba(25, 24, 43, 0.25)" : "#ff6155")};
             border-radius: 8px;
+            background: ${({ valid }) => (valid ? "#fff" : "rgba(255, 97, 85, 0.15)")};
+            color: ${({ valid }) => (valid ? "#242742" : "#FF6155")};
 
             &::placeholder {
-              color: #242742;
+              color: "#242742";
               font-feature-settings: "liga" off, "clig" off;
               font-size: 16px;
               font-style: normal;
@@ -227,7 +240,7 @@ const Main = styled.main`
 
             &:focus {
               outline: none;
-              border: 1px solid #242742;
+              border: 1px solid ${({ valid }) => (valid ? "#242742" : "#FF6155")};
             }
           }
         }
